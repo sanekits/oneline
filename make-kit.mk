@@ -14,6 +14,23 @@ kit_depends := \
 .PHONY: publish publish-draft
 
 
+onelinerhub:
+	set -x ; git clone github:sanekits/onelinerhub -o sane \
+	&& cd onelinerhub \
+	&& git remote add upstream github:Onelinerhub/onelinerhub \
+	&& git fetch upstream
+
+refresh-onelinerbuild: onelinerhub
+	cd onelinerhub \
+		&& git fetch upstream \
+		&& git fetch sane \
+		&& git pull sane sane-main \
+		&& git merge upstream/main \
+		&& git push sane sane-main
+
+build: refresh-onelinerbuild
+	cd onelinerhub
+
 publish: pre-publish publish-common release-upload release-list
 	cat tmp/draft-url
 	@echo ">>>> publish complete OK. (FINAL)  <<<"
